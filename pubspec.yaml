@@ -1,0 +1,71 @@
+name: gee_hazirjnab
+description: "Gee Hazirjnab - Handyman Service Booking App"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.10.8
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  
+  # HTTP & API
+  dio: ^5.4.0
+  
+  # State Management
+  provider: ^6.1.1
+  
+  # UI Enhancements
+  cached_network_image: ^3.3.1
+  shimmer: ^3.0.0
+  intl: ^0.19.0
+  
+  # Forms & Inputs
+  pinput: ^5.0.0
+  
+  # Storage
+  shared_preferences: ^2.2.2
+  flutter_secure_storage: ^9.0.0
+  
+  # Carousel
+  carousel_slider: ^5.0.0
+  smooth_page_indicator: ^1.1.0
+  
+  # Maps & Location
+  google_maps_flutter: ^2.5.0
+  geolocator: ^10.1.0
+  geocoding: ^2.1.1
+  connectivity_plus: ^7.0.0
+  image_picker: ^1.2.1
+  url_launcher: ^6.3.2
+  
+  # Firebase / Push Notifications
+  firebase_core: ^3.10.0
+  firebase_messaging: ^15.2.0
+  
+  flutter_launcher_icons: ^0.14.4
+  google_fonts: ^8.0.1
+  flutter_html: ^3.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+  
+  assets:
+    - assets/images/
+    - assets/icons/
+
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/icons/hj-icon.png"
+  min_sdk_android: 21
+  adaptive_icon_background: "#031A3E"
+  adaptive_icon_foreground: "assets/icons/hj-icon.png"

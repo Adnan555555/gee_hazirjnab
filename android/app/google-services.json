@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "971997369103",
+    "project_id": "hazirjnab",
+    "storage_bucket": "hazirjnab.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:971997369103:android:fc2fdc67788b2b2046647a",
+        "android_client_info": {
+          "package_name": "com.hazirjnab.customer"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAjmVgLVwDvbfK1vHRy_hB8YRCTg8tsaUM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

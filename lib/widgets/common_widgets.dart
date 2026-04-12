@@ -121,7 +121,7 @@ class ServiceCard extends StatelessWidget {
   final int quantity;
   final VoidCallback onAdd;
   final VoidCallback onRemove;
-  
+
   const ServiceCard({
     super.key,
     required this.name,
@@ -134,7 +134,7 @@ class ServiceCard extends StatelessWidget {
     required this.onAdd,
     required this.onRemove,
   });
-  
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -160,7 +160,7 @@ class ServiceCard extends StatelessWidget {
             ),
           ),
           const SizedBox(width: AppTheme.spacingM),
-          
+
           // Details
           Expanded(
             child: Column(
@@ -168,6 +168,8 @@ class ServiceCard extends StatelessWidget {
               children: [
                 Text(
                   name,
+                  maxLines: 1,  // ✅ Correct placement
+                  overflow: TextOverflow.ellipsis,  // ✅ Recommended
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -177,12 +179,12 @@ class ServiceCard extends StatelessWidget {
                 if (description != null)
                   Text(
                     description!,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                       fontSize: 12,
                       color: AppTheme.secondary,
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
                   ),
                 const SizedBox(height: 4),
                 Row(
@@ -225,88 +227,88 @@ class ServiceCard extends StatelessWidget {
                         ),
                       ],
                     ),
-                    
+
                     // Add/Quantity
                     quantity == 0
                         ? InkWell(
-                            onTap: onAdd,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 8,
+                      onTap: onAdd,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppTheme.primary,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(
+                          children: [
+                            const Text(
+                              'ADD',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
                               ),
+                            ),
+                            const SizedBox(width: 4),
+                            Container(
+                              padding: const EdgeInsets.all(2),
                               decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: const Icon(
+                                Icons.add,
                                 color: AppTheme.primary,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Row(
-                                children: [
-                                  const Text(
-                                    'ADD',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Container(
-                                    padding: const EdgeInsets.all(2),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(4),
-                                    ),
-                                    child: const Icon(
-                                      Icons.add,
-                                      color: AppTheme.primary,
-                                      size: 14,
-                                    ),
-                                  ),
-                                ],
+                                size: 14,
                               ),
                             ),
-                          )
+                          ],
+                        ),
+                      ),
+                    )
                         : Container(
-                            decoration: BoxDecoration(
-                              color: AppTheme.primary,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Row(
-                              children: [
-                                InkWell(
-                                  onTap: onRemove,
-                                  child: Container(
-                                    padding: const EdgeInsets.all(8),
-                                    child: const Icon(
-                                      Icons.remove,
-                                      color: Colors.white,
-                                      size: 18,
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                                  child: Text(
-                                    '$quantity',
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                                InkWell(
-                                  onTap: onAdd,
-                                  child: Container(
-                                    padding: const EdgeInsets.all(8),
-                                    child: const Icon(
-                                      Icons.add,
-                                      color: Colors.white,
-                                      size: 18,
-                                    ),
-                                  ),
-                                ),
-                              ],
+                      decoration: BoxDecoration(
+                        color: AppTheme.primary,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        children: [
+                          InkWell(
+                            onTap: onRemove,
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              child: const Icon(
+                                Icons.remove,
+                                color: Colors.white,
+                                size: 18,
+                              ),
                             ),
                           ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            child: Text(
+                              '$quantity',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          InkWell(
+                            onTap: onAdd,
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              child: const Icon(
+                                Icons.add,
+                                color: Colors.white,
+                                size: 18,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ],
@@ -317,7 +319,6 @@ class ServiceCard extends StatelessWidget {
     );
   }
 }
-
 // Category Card
 class CategoryCard extends StatelessWidget {
   final String name;

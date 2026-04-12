@@ -7,19 +7,35 @@ import '../../services/api_service.dart';
 import '../../providers/cart_provider.dart';
 import 'package:dio/dio.dart';
 import '../../widgets/common_widgets.dart';
+import '../../widgets/service_quick_add_sheet.dart';
 import '../booking/checkout_screen.dart';
+
+// Strip HTML tags from text
+String stripHtml(String? html) {
+  if (html == null || html.isEmpty) return '';
+  return html
+      .replaceAll(RegExp(r'<[^>]*>'), '')
+      .replaceAll('&nbsp;', ' ')
+      .replaceAll('&amp;', '&')
+      .replaceAll('&lt;', '<')
+      .replaceAll('&gt;', '>')
+      .replaceAll('&quot;', '"')
+      .replaceAll('\\\\', ' ')
+      .replaceAll(RegExp(r'\s+'), ' ')
+      .trim();
+}
 
 /// Category Services Screen - List of services in a category + cart
 class CategoryServicesScreen extends StatefulWidget {
   final int categoryId;
   final String categoryName;
-  
+
   const CategoryServicesScreen({
     super.key,
     required this.categoryId,
     required this.categoryName,
   });
-  
+
   @override
   State<CategoryServicesScreen> createState() => _CategoryServicesScreenState();
 }
@@ -27,36 +43,49 @@ class CategoryServicesScreen extends StatefulWidget {
 class _CategoryServicesScreenState extends State<CategoryServicesScreen> {
   final _searchController = TextEditingController();
   final ApiService _api = ApiService();
-  
+
   List<Service> _services = [];
+  List<Service> _filteredServices = [];
   bool _isLoading = true;
   String? _error;
-  
+
   @override
   void initState() {
     super.initState();
     _loadServices();
+    _searchController.addListener(_onSearchChanged);
   }
-  
+
+  void _onSearchChanged() {
+    final query = _searchController.text.toLowerCase();
+    setState(() {
+      _filteredServices = _services.where((s) =>
+      s.name.toLowerCase().contains(query) ||
+          stripHtml(s.description).toLowerCase().contains(query)
+      ).toList();
+    });
+  }
+
   Future<void> _loadServices() async {
     setState(() {
       _isLoading = true;
       _error = null;
     });
-    
+
     try {
       final response = await _api.get(
-        '${AppConfig.publicCategoryServices}/${widget.categoryId}/services'
+          '${AppConfig.publicCategoryServices}/${widget.categoryId}/services'
       );
-      
+
       if (response.data['success'] == true) {
         final data = response.data['data'];
         final servicesJson = data['services'] as List? ?? [];
-        
+
         setState(() {
           _services = servicesJson
               .map((json) => Service.fromJson(json))
               .toList();
+          _filteredServices = _services;
           _isLoading = false;
         });
       } else {
@@ -77,7 +106,7 @@ class _CategoryServicesScreenState extends State<CategoryServicesScreen> {
       debugPrint('Error loading services: $e');
     }
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -108,7 +137,7 @@ class _CategoryServicesScreenState extends State<CategoryServicesScreen> {
                   ),
                 ),
               ),
-              
+
               // Label
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20),
@@ -120,9 +149,9 @@ class _CategoryServicesScreenState extends State<CategoryServicesScreen> {
                   ),
                 ),
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Services List with pull to refresh
               Expanded(
                 child: RefreshIndicator(
@@ -131,20 +160,20 @@ class _CategoryServicesScreenState extends State<CategoryServicesScreen> {
                   child: _isLoading
                       ? _buildLoading()
                       : _error != null
-                          ? _buildError()
-                          : _services.isEmpty
-                              ? _buildEmpty()
-                              : _buildServicesList(),
+                      ? _buildError()
+                      : _filteredServices.isEmpty
+                      ? _buildEmpty()
+                      : _buildServicesList(),
                 ),
               ),
             ],
           ),
-          
+
           // Cart Button
           Consumer<CartProvider>(
             builder: (context, cartProvider, child) {
               if (cartProvider.currentCartItemCount == 0) return const SizedBox();
-              
+
               return Positioned(
                 left: 16,
                 right: 16,
@@ -214,13 +243,13 @@ class _CategoryServicesScreenState extends State<CategoryServicesScreen> {
       ),
     );
   }
-  
+
   Widget _buildLoading() {
     return const Center(
       child: CircularProgressIndicator(color: AppTheme.primary),
     );
   }
-  
+
   Widget _buildError() {
     return Center(
       child: Padding(
@@ -248,7 +277,7 @@ class _CategoryServicesScreenState extends State<CategoryServicesScreen> {
       ),
     );
   }
-  
+
   Widget _buildEmpty() {
     return const Center(
       child: Padding(
@@ -268,34 +297,37 @@ class _CategoryServicesScreenState extends State<CategoryServicesScreen> {
       ),
     );
   }
-  
+
   Widget _buildServicesList() {
     return Consumer<CartProvider>(
       builder: (context, cartProvider, child) {
         return ListView.builder(
           padding: const EdgeInsets.fromLTRB(20, 0, 20, 70),
-          itemCount: _services.length,
+          itemCount: _filteredServices.length,
           itemBuilder: (context, index) {
-            final service = _services[index];
+            final service = _filteredServices[index];
             final quantity = cartProvider.getQuantity(service.id);
-            
-            return ServiceCard(
-              name: service.name,
-              description: service.description,
-              imageUrl: service.image,
-              regularPrice: service.regularPrice,
-              salePrice: service.salePrice ?? service.regularPrice,
-              rating: service.rating,
-              quantity: quantity,
-              onAdd: () => cartProvider.addToCart(service),
-              onRemove: () => cartProvider.removeFromCart(service.id),
+
+            return GestureDetector(
+              onTap: () => ServiceQuickAddSheet.show(context, service),
+              child: ServiceCard(
+                name: service.name,
+                description: stripHtml(service.description),
+                imageUrl: service.image,
+                regularPrice: service.regularPrice,
+                salePrice: service.salePrice ?? service.regularPrice,
+                rating: service.rating,
+                quantity: quantity,
+                onAdd: () => cartProvider.addToCart(service),
+                onRemove: () => cartProvider.removeFromCart(service.id),
+              ),
             );
           },
         );
       },
     );
   }
-  
+
   @override
   void dispose() {
     _searchController.dispose();
